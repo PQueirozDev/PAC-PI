@@ -8,7 +8,7 @@
 #define ALTURA 600
 #define TOTAL 27
 
-// Mapa
+// Mapaa
 #define MAPA_X 360
 #define MAPA_Y 90
 #define BLOCO_L 56

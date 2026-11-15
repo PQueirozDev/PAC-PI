@@ -44,7 +44,6 @@
   p { margin: 0 0 1em; max-width: 64ch; }
   code, pre, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
 
-  /* topo */
   .topo { border-bottom: 2px solid var(--linha); background: var(--painel); }
   .topo .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; flex-wrap: wrap; }
   .marca { font-family: "Silkscreen", monospace; color: var(--amarelo); font-size: 1.3rem; text-decoration: none; }
@@ -52,7 +51,6 @@
   .topo nav a { color: var(--texto); text-decoration: none; font-size: .98rem; }
   .topo nav a:hover { color: var(--amarelo); }
 
-  /* abertura com o mapa jogavel */
   .abertura { padding: 56px 0 72px; }
   .abertura .wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 48px; align-items: start; }
   .abertura h1 { font-size: clamp(2.8rem, 7vw, 5.2rem); color: var(--amarelo); letter-spacing: .02em; margin-bottom: 20px; }
@@ -93,7 +91,6 @@
   .controles .botao { padding: 8px 16px; font-size: .95rem; }
   [hidden] { display: none !important; }
 
-  /* secoes */
   section { padding: 72px 0; border-top: 2px solid var(--painel); }
   .sub { color: var(--suave); max-width: 64ch; margin-bottom: 32px; }
 
@@ -351,7 +348,6 @@ return estado_da_letra(mapa[linha][coluna]);</pre>
 </footer>
 
 <script>
-  // botao "Copiar" do comando de instalacao
   document.getElementById("copiar").addEventListener("click", function () {
     var botao = this;
     var texto = document.getElementById("comando-instalar").textContent;
@@ -361,7 +357,6 @@ return estado_da_letra(mapa[linha][coluna]);</pre>
     });
   });
 
-  // Mesmos dados do main.c
   var MAPA = [ "................A..............................", "..............AAA..............................", "............AAAAA.........BB...................", "............AAAAA.....D..BBB...................", ".....CCC....CCAAAA.DDDDDBBBBB..................", ".....CCCCCCCCCAAAADDDDDDDBBBB..................", ".....CCCCCCCCCAAACDDDDDDDBBDDD.................", ".....CCCCCCCCCACCCCDDDDDDDBDDDDDD..............", ".....CCCCCCCCCCCCCCCDDDDDDDDDDDDDEE............", ".....CCCCCCCCCCCCCCCCDDDDDDDDDDDDEEEEE.........", ".....CCCCCCCCCCCCCCCCDDDDDDDDDDDEEEEEELFFF.....", "...CCCCCCCCCCCCCCCCCDDDDDDDDDDDDEEEEELLFFFF....", ".CCCCCCCCCCCCCCCCCCCDDDDDDDDDDDEEEEEELLFFFFGGG.", ".CCCCCCCCCCCCCCCCCCDDDDDDDDDDDDKEEEEELLLFFFGGGG", "CCCCCCCCCCCCCCCCCCCDDDDDDDDDDDKKEEEELLLLFFNNNNN", "HHCCCCCCCCCCCCCCCCCDDDDDDDDDDDKKEELLLLLLMMMNNNN", ".HHHHCCCCCCCIICCCCCJDDDDDDDDDKKKKELLLLLMMMMMMMM", ".HHHHHHCCCCIIIIJJJJJJDDDDDDDDKKKKELLLLRRRRTTTT.", "....HHHHH.IIIIIJJJJJJJJJJJJJKKKKKELLRRRRRRSST..", "....HHH...IIIIIIJJJJJJJJJJJJKKKKKRRRRRRRRRSS...", "...........IIIIIIJJJJJJJJJJJKKKKKRRRRRRRRRRR...", ".............IIIIJJJJJJJJJJJKKKKKRRRRRRRRRR....", "...............IJJJJJJJJJJJJPPPPPRRRRRRRRR.....", "................JJJJJJJJJJJJPPPPPRRVRRRRRR.....", "................JJJJJJJJJJJPPPPPPVVVVVRRRR.....", ".................JJJJJJJJJPPPPPQQVVVVVVVVR.....", "...................JJJJJJPPPPPPQQVVVVVVVRR.....", "...................JOOOOJPPPPPPPVVVVVVVVRR.....", "...................OOOOOOPPPPVVVVVVVVVVWW......", "...................OOOOOOOOPVVVVVVVVVVVWW......", "...................OOOOOOOOUUUUUVVVVVVVWW......", "...................OOOOOOOOUUUUUVVVVVVYW.......", "...................OOOOOOOUUUUUUUVVVVYYY.......", "......................OOOXXUUUUUUVUYYY.........", "......................OOXXXXXUUUUUU............", ".......................XXXXXXXUU...............", ".......................XXXXXXXX................", "........................XXXXZXZ................", "........................ZZZZZZZ................", ".......................####ZZZZ................", ".....................########Z.................", "....................#########..................", "....................#########..................", "......................#####....................", "........................##.....................", ".........................#....................." ];
   var LETRAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#";
   var SIGLAS = ["RR","AP","AM","PA","MA","CE","RN","AC","RO","MT","TO","PI","PE","PB","MS","GO","DF","BA","SE","AL","SP","MG","ES","PR","RJ","SC","RS"];
@@ -390,7 +385,6 @@ return estado_da_letra(mapa[linha][coluna]);</pre>
     return MAPA[l][c];
   }
 
-  // desenha a matriz: cada letra vira um quadradinho
   for (var l = 0; l < linhas; l++) {
     for (var c = 0; c < colunas; c++) {
       var letra = MAPA[l][c];
@@ -402,7 +396,6 @@ return estado_da_letra(mapa[linha][coluna]);</pre>
         var e = LETRAS.indexOf(letra);
         cel.className = "cel terra";
         cel.dataset.estado = e;
-        // fronteira onde o vizinho e diferente
         cel.style.borderTopWidth = letraEm(l - 1, c) !== letra ? "1px" : "0";
         cel.style.borderBottomWidth = letraEm(l + 1, c) !== letra ? "1px" : "0";
         cel.style.borderLeftWidth = letraEm(l, c - 1) !== letra ? "1px" : "0";

@@ -42,7 +42,6 @@
   code, pre { font-family: "IBM Plex Mono", ui-monospace, monospace; }
   p code, li code { font-size: .92em; background: var(--escuro); padding: 1px 6px; border-radius: 4px; }
 
-  /* topo */
   .topo { border-bottom: 2px solid var(--linha); background: var(--painel); }
   .topo .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; flex-wrap: wrap; }
   .marca { font-family: "Silkscreen", monospace; color: var(--amarelo); font-size: 1.3rem; text-decoration: none; }
@@ -50,7 +49,6 @@
   .topo nav a { color: var(--texto); text-decoration: none; font-size: .98rem; }
   .topo nav a:hover, .topo nav a[aria-current] { color: var(--amarelo); }
 
-  /* abertura */
   .abertura { padding: 64px 0 56px; }
   .abertura h1 { font-size: clamp(2.2rem, 5.6vw, 4rem); color: var(--amarelo); margin-bottom: 20px; }
   .abertura .intro { font-size: 1.2rem; }
@@ -64,7 +62,6 @@
   section { padding: 72px 0; border-top: 2px solid var(--painel); }
   .sub { color: var(--suave); max-width: 64ch; margin-bottom: 36px; }
 
-  /* linha do tempo resumida */
   .tempo { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
   .tempo li { border-top: 4px solid var(--linha); padding-top: 12px; }
   .tempo li.marco { border-top-color: var(--amarelo); }
@@ -72,7 +69,6 @@
   .tempo a { color: var(--texto); text-decoration: none; font-weight: 700; display: block; margin-top: 2px; line-height: 1.35; }
   .tempo a:hover { color: var(--amarelo); }
 
-  /* etapas detalhadas */
   .etapa { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 40px 48px; align-items: start; padding: 48px 0; border-bottom: 1px dashed var(--linha); }
   .etapa:last-child { border-bottom: 0; padding-bottom: 0; }
   .etapa:first-of-type { padding-top: 8px; }
@@ -98,7 +94,6 @@
   pre .v { color: var(--verde-claro); }
   pre .y { color: var(--amarelo); }
 
-  /* laco principal */
   .laco { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; counter-reset: passo; }
   .laco li { counter-increment: passo; background: var(--painel); border: 2px solid var(--linha); border-radius: 10px; padding: 18px 20px; position: relative; }
   .laco li::before { content: counter(passo); font-family: "Silkscreen", monospace; color: var(--amarelo); font-size: 1.4rem; display: block; margin-bottom: 6px; }

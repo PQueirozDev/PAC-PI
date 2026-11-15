@@ -7,48 +7,37 @@
 
 #define LARGURA 880
 #define ALTURA 600
-#define TOTAL 27            // quantidade de estados (26 estados + DF)
-#define TOTAL_PERGUNTAS 15  // quantidade de monumentos (perguntas) do jogo
+#define TOTAL 27
+#define TOTAL_PERGUNTAS 15
 #define PONTOS_POR_ACERTO 10
 
-// As 2 ultimas perguntas sao os CHEFES FINAIS: valem mais pontos,
-// nao tem dica e o mapa nao acende quando o mouse passa por cima.
-#define PRIMEIRO_CHEFE 13   // posicao da primeira pergunta-chefe
+#define PRIMEIRO_CHEFE 13
 #define PONTOS_CHEFE 30
 #define PONTUACAO_MAXIMA ((PRIMEIRO_CHEFE * PONTOS_POR_ACERTO) + (TOTAL_PERGUNTAS - PRIMEIRO_CHEFE) * PONTOS_CHEFE)
 
-// Telas do jogo: a variavel "tela" guarda um destes numeros
-#define TELA_MENU 0      // tela de entrada
-#define TELA_TUTORIAL 1  // como jogar
-#define TELA_CREDITOS 2  // creditos
-#define TELA_JOGO 3      // perguntas
-#define TELA_FIM 4       // resultado final
+#define TELA_MENU 0
+#define TELA_TUTORIAL 1
+#define TELA_CREDITOS 2
+#define TELA_JOGO 3
+#define TELA_FIM 4
 
-// Botoes da tela de entrada
 #define TOTAL_BOTOES 3
-#define BOTAO_L 260                    // largura do botao
-#define BOTAO_A 50                     // altura do botao
+#define BOTAO_L 260
+#define BOTAO_A 50
 #define BOTAO_X ((LARGURA - BOTAO_L) / 2)
-#define BOTAO_Y 250                    // altura do primeiro botao
-#define BOTAO_ESPACO 70                // distancia entre um botao e outro
+#define BOTAO_Y 250
+#define BOTAO_ESPACO 70
 
-// Botao VOLTAR (tutorial e creditos)
 #define VOLTAR_L 180
 #define VOLTAR_A 44
 #define VOLTAR_X ((LARGURA - VOLTAR_L) / 2)
 #define VOLTAR_Y 520
 
-// ===== MAPA DO BRASIL =====
-// O mapa e uma matriz de letras. Cada letra e um estado e cada letra
-// vira um quadradinho de CELULA x CELULA pixels na tela. O ponto '.' e o mar.
-// A letra de cada estado esta no vetor LETRAS, na mesma posicao do vetor siglas:
-//   A=RR  B=AP  C=AM  D=PA  E=MA  F=CE  G=RN  H=AC  I=RO  J=MT  K=TO  L=PI  M=PE  N=PB
-//   O=MS  P=GO  Q=DF  R=BA  S=SE  T=AL  U=SP  V=MG  W=ES  X=PR  Y=RJ  Z=SC  #=RS
 #define MAPA_LINHAS 46
 #define MAPA_COLUNAS 47
-#define CELULA 8      // tamanho de cada quadradinho em pixels
-#define MAPA_X 412    // canto esquerdo do mapa na tela
-#define MAPA_Y 82     // topo do mapa na tela
+#define CELULA 8
+#define MAPA_X 412
+#define MAPA_Y 82
 
 char LETRAS[TOTAL + 1] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#";
 
@@ -101,8 +90,6 @@ char *mapa[MAPA_LINHAS] = {
     ".........................#.....................",
 };
 
-// Recebe uma letra do mapa e devolve a posicao do estado (0 a 26).
-// Se for mar ('.'), devolve -1.
 int estado_da_letra(char letra)
 {
     for (int i = 0; i < TOTAL; i++) {
@@ -113,45 +100,37 @@ int estado_da_letra(char letra)
     return -1;
 }
 
-// Recebe uma posicao da tela (x, y), por exemplo onde esta o mouse,
-// e devolve qual estado esta ali. Devolve -1 se for mar ou fora do mapa.
 int estado_na_tela(int x, int y)
 {
     if (x < MAPA_X || y < MAPA_Y) {
-        return -1; // a esquerda ou acima do mapa
+        return -1;
     }
 
-    // divide pelo tamanho do quadradinho para achar a coluna e a linha da matriz
     int coluna = (x - MAPA_X) / CELULA;
     int linha = (y - MAPA_Y) / CELULA;
 
     if (coluna >= MAPA_COLUNAS || linha >= MAPA_LINHAS) {
-        return -1; // a direita ou abaixo do mapa
+        return -1;
     }
     return estado_da_letra(mapa[linha][coluna]);
 }
 
-// Escreve um texto MAIOR que o normal, centralizado em x.
-// A fonte embutida do Allegro e bem pequena (8 pixels), entao
-// "esticamos" o desenho multiplicando o tamanho pela escala (2, 3...).
 void escrever_grande(ALLEGRO_FONT *fonte, ALLEGRO_COLOR cor, float x, float y, int escala, char *texto)
 {
     ALLEGRO_TRANSFORM t;
     al_identity_transform(&t);
-    al_scale_transform(&t, escala, escala); // aumenta o tamanho
+    al_scale_transform(&t, escala, escala);
     al_use_transform(&t);
     al_draw_text(fonte, cor, x / escala, y / escala, ALLEGRO_ALIGN_CENTRE, texto);
-    al_identity_transform(&t);              // volta para o tamanho normal
+    al_identity_transform(&t);
     al_use_transform(&t);
 }
 
-// Devolve 1 se a pergunta p e um chefe final, ou 0 se e uma pergunta normal.
 int eh_chefe(int p)
 {
     return p >= PRIMEIRO_CHEFE;
 }
 
-// Quantos pontos vale acertar a pergunta p.
 int pontos_da_pergunta(int p)
 {
     if (eh_chefe(p)) {
@@ -160,7 +139,6 @@ int pontos_da_pergunta(int p)
     return PONTOS_POR_ACERTO;
 }
 
-// Devolve 1 se o mouse (mx, my) esta dentro do retangulo, ou 0 se esta fora.
 int mouse_dentro(int mx, int my, int x, int y, int largura, int altura)
 {
     if (mx >= x && mx <= x + largura && my >= y && my <= y + altura) {
@@ -169,8 +147,6 @@ int mouse_dentro(int mx, int my, int x, int y, int largura, int altura)
     return 0;
 }
 
-// Desenha um botao com o texto no meio.
-// Se "destacado" for 1 (mouse em cima), o botao fica verde com borda amarela.
 void desenhar_botao(ALLEGRO_FONT *fonte, char *texto, int x, int y, int largura, int altura, int destacado)
 {
     ALLEGRO_COLOR cor_fundo = al_map_rgb(32, 46, 88);
@@ -217,8 +193,6 @@ int main()
         "Santa Catarina", "Rio Grande do Sul"
     };
 
-    // linha e coluna da matriz onde a sigla de cada estado e escrita.
-    // Nos estados pequenos do litoral a sigla fica no mar, ao lado do estado.
     int rotulo_linha[TOTAL] = {
         3, 4, 11, 11, 12, 12, 12,
         17, 19, 21, 18, 15, 16, 14,
@@ -232,10 +206,6 @@ int main()
         30, 35, 43, 26, 40, 28, 24
     };
 
-    // ===== PERGUNTAS =====
-    // Cada pergunta usa a MESMA posicao em todos os vetores abaixo.
-    // Exemplo: posicao 0 = Cristo Redentor, foto cristo.png, resposta 24 (RJ).
-    // As posicoes 13 e 14 (a partir de PRIMEIRO_CHEFE) sao os chefes finais.
     char *monumentos[TOTAL_PERGUNTAS] = {
         "Cristo Redentor",
         "Teatro Amazonas",
@@ -250,8 +220,8 @@ int main()
         "Estatua do Padre Cicero",
         "Relogio Municipal",
         "Ponte dos Ingleses",
-        "Forte dos Reis Magos",        // chefe final 1
-        "Real Forte Principe da Beira" // chefe final 2
+        "Forte dos Reis Magos",
+        "Real Forte Principe da Beira"
     };
     char *arquivos[TOTAL_PERGUNTAS] = {
         "cristo.png",
@@ -270,25 +240,23 @@ int main()
         "reis_magos.png",
         "principe_beira.png"
     };
-    // posicao do estado certo nos vetores siglas/nomes
     int respostas[TOTAL_PERGUNTAS] = {
-        24, // RJ
-        2,  // AM
-        16, // DF
-        17, // BA
-        24, // RJ
-        20, // SP
-        20, // SP
-        4,  // MA
-        23, // PR
-        18, // SE
-        5,  // CE
-        2,  // AM
-        5,  // CE
-        6,  // RN
-        8   // RO
+        24,
+        2,
+        16,
+        17,
+        24,
+        20,
+        20,
+        4,
+        23,
+        18,
+        5,
+        2,
+        5,
+        6,
+        8
     };
-    // os chefes nao tem dica (a tecla D nao funciona neles)
     char *dicas[TOTAL_PERGUNTAS] = {
         "DICA: fica na regiao Sudeste e tem litoral.",
         "DICA: fica na regiao Norte e e o maior estado do Brasil.",
@@ -324,17 +292,14 @@ int main()
         "Construido entre 1776 e 1783 no rio Guapore, na fronteira com a Bolivia."
     };
 
-    // carrega a foto de cada monumento
     ALLEGRO_BITMAP *fotos[TOTAL_PERGUNTAS];
     for (int p = 0; p < TOTAL_PERGUNTAS; p++) {
         fotos[p] = al_load_bitmap(arquivos[p]);
         if (fotos[p] == NULL) {
-            // o jogo continua, mas mostra um quadro no lugar da foto
             printf("Aviso: nao achei o arquivo %s\n", arquivos[p]);
         }
     }
 
-    // ===== TEXTOS DAS TELAS DE ENTRADA =====
     char *botoes[TOTAL_BOTOES] = { "JOGAR", "COMO JOGAR", "CREDITOS" };
 
     char *tutorial[7] = {
@@ -349,21 +314,19 @@ int main()
 
     char *desenvolvedores[3] = { "Arthur Pimentel", "Christopher Nithigale", "Pedro Queiroz" };
 
-    // ===== VARIAVEIS DO JOGO =====
-    int pergunta = 0;   // qual pergunta esta na tela (0, 1 ou 2)
-    int pontos = 0;     // pontuacao: +10 por acerto
-    int acertos = 0;    // quantas perguntas o jogador acertou
-    int acertou[TOTAL_PERGUNTAS] = { 0 }; // 1 = acertou aquela pergunta, 0 = errou
-    int escolhido = -1; // -1 = ainda nao clicou
-    int dica = 0;       // 1 = mostrar a dica
-    int tela = TELA_MENU; // o jogo comeca na tela de entrada
-    int novo_jogo = 0;  // 1 = zerar tudo e comecar as perguntas
-    int mouse_x = 0;    // posicao atual do mouse (para destacar o estado)
+    int pergunta = 0;
+    int pontos = 0;
+    int acertos = 0;
+    int acertou[TOTAL_PERGUNTAS] = { 0 };
+    int escolhido = -1;
+    int dica = 0;
+    int tela = TELA_MENU;
+    int novo_jogo = 0;
+    int mouse_x = 0;
     int mouse_y = 0;
     int rodando = 1;
 
     while (rodando) {
-        // ===== CORES USADAS NO JOGO =====
         ALLEGRO_COLOR branco = al_map_rgb(255, 255, 255);
         ALLEGRO_COLOR preto = al_map_rgb(0, 0, 0);
         ALLEGRO_COLOR amarelo = al_map_rgb(240, 200, 40);
@@ -377,13 +340,11 @@ int main()
         al_clear_to_color(fundo);
 
         if (tela == TELA_MENU) {
-            // ===== TELA DE ENTRADA (MENU) =====
             escrever_grande(fonte, amarelo, LARGURA / 2, 80, 7, "ONDE FICA?");
             al_draw_text(fonte, branco, LARGURA / 2, 160, ALLEGRO_ALIGN_CENTRE,
                 "Descubra em qual estado ficam os monumentos do Brasil!");
             al_draw_line(LARGURA / 2 - 200, 190, LARGURA / 2 + 200, 190, borda, 2);
 
-            // desenha os 3 botoes, um embaixo do outro
             for (int b = 0; b < TOTAL_BOTOES; b++) {
                 int y = BOTAO_Y + b * BOTAO_ESPACO;
                 int destacado = mouse_dentro(mouse_x, mouse_y, BOTAO_X, y, BOTAO_L, BOTAO_A);
@@ -394,17 +355,14 @@ int main()
             al_draw_text(fonte, cinza, LARGURA / 2, 565, ALLEGRO_ALIGN_CENTRE, "Projeto Integrador");
         }
         else if (tela == TELA_TUTORIAL) {
-            // ===== TELA COMO JOGAR =====
             al_draw_filled_rounded_rectangle(80, 30, LARGURA - 80, 500, 12, 12, painel);
             al_draw_rounded_rectangle(80, 30, LARGURA - 80, 500, 12, 12, borda, 3);
             escrever_grande(fonte, amarelo, LARGURA / 2, 55, 4, "COMO JOGAR");
 
-            // escreve cada linha do vetor tutorial
             for (int i = 0; i < 7; i++) {
                 al_draw_text(fonte, branco, 130, 115 + i * 26, 0, tutorial[i]);
             }
 
-            // legenda das cores do mapa
             al_draw_text(fonte, amarelo, 130, 305, 0, "CORES DO MAPA");
             al_draw_filled_rectangle(130, 325, 146, 341, al_map_rgb(130, 210, 140));
             al_draw_text(fonte, branco, 160, 330, 0, "mouse em cima do estado");
@@ -413,7 +371,6 @@ int main()
             al_draw_filled_rectangle(130, 375, 146, 391, al_map_rgb(210, 60, 50));
             al_draw_text(fonte, branco, 160, 380, 0, "escolha errada");
 
-            // teclas
             al_draw_text(fonte, amarelo, 470, 305, 0, "TECLAS");
             al_draw_text(fonte, branco, 470, 330, 0, "D     = mostrar uma dica");
             al_draw_text(fonte, branco, 470, 355, 0, "ENTER = proxima pergunta");
@@ -427,7 +384,6 @@ int main()
                 mouse_dentro(mouse_x, mouse_y, VOLTAR_X, VOLTAR_Y, VOLTAR_L, VOLTAR_A));
         }
         else if (tela == TELA_CREDITOS) {
-            // ===== TELA DE CREDITOS =====
             al_draw_filled_rounded_rectangle(160, 30, LARGURA - 160, 500, 12, 12, painel);
             al_draw_rounded_rectangle(160, 30, LARGURA - 160, 500, 12, 12, borda, 3);
             escrever_grande(fonte, amarelo, LARGURA / 2, 55, 4, "CREDITOS");
@@ -445,8 +401,7 @@ int main()
                 mouse_dentro(mouse_x, mouse_y, VOLTAR_X, VOLTAR_Y, VOLTAR_L, VOLTAR_A));
         }
         else if (tela == TELA_FIM) {
-            // ===== TELA FINAL =====
-            char texto[60]; // guarda um texto montado com numeros
+            char texto[60];
 
             al_draw_filled_rounded_rectangle(30, 60, LARGURA - 30, 540, 12, 12, painel);
             al_draw_rounded_rectangle(30, 60, LARGURA - 30, 540, 12, 12, borda, 3);
@@ -459,14 +414,11 @@ int main()
             snprintf(texto, sizeof(texto), "Acertos: %d de %d", acertos, TOTAL_PERGUNTAS);
             escrever_grande(fonte, branco, LARGURA / 2, 192, 2, texto);
 
-            // linha separadora
             al_draw_line(200, 228, 680, 228, borda, 2);
 
-            // resumo de cada pergunta em duas colunas de 8 linhas.
-            // Os chefes aparecem com "CHEFE" no final.
             for (int p = 0; p < TOTAL_PERGUNTAS; p++) {
-                int x = 50 + (p / 8) * 395;  // p de 0 a 7 = coluna da esquerda
-                int y = 240 + (p % 8) * 18;  // % da a linha dentro da coluna
+                int x = 50 + (p / 8) * 395;
+                int y = 240 + (p % 8) * 18;
                 char *marca = "";
                 if (eh_chefe(p)) {
                     marca = " CHEFE";
@@ -483,13 +435,11 @@ int main()
 
             al_draw_line(200, 392, 680, 392, borda, 2);
 
-            // conta quantos chefes o jogador derrotou
             int chefes_vencidos = 0;
             for (int p = PRIMEIRO_CHEFE; p < TOTAL_PERGUNTAS; p++) {
                 chefes_vencidos = chefes_vencidos + acertou[p];
             }
 
-            // mensagem de acordo com a quantidade de acertos
             if (acertos == TOTAL_PERGUNTAS) {
                 escrever_grande(fonte, amarelo, LARGURA / 2, 410, 2, "Excelente! Gabaritou!");
                 al_draw_text(fonte, branco, LARGURA / 2, 442, ALLEGRO_ALIGN_CENTRE,
@@ -515,9 +465,7 @@ int main()
                 "R ou ENTER = jogar de novo     ESC = menu");
         }
         else {
-            // ===== TELA DA PERGUNTA =====
 
-            // barra de cima: titulo, teclas e placar
             al_draw_filled_rectangle(0, 0, LARGURA, 56, painel);
             al_draw_line(0, 56, LARGURA, 56, borda, 2);
             escrever_grande(fonte, amarelo, 140, 16, 3, "ONDE FICA?");
@@ -533,8 +481,6 @@ int main()
             al_draw_textf(fonte, amarelo, LARGURA - 20, 34, ALLEGRO_ALIGN_RIGHT,
                 "Pontos: %d   Acertos: %d", pontos, acertos);
 
-            // nome e foto do monumento da pergunta atual.
-            // Nomes compridos nao cabem em cima da foto com escala 2, entao usam escala 1.
             if (strlen(monumentos[pergunta]) <= 20) {
                 escrever_grande(fonte, branco, 170, 66, 2, monumentos[pergunta]);
             }
@@ -545,13 +491,11 @@ int main()
                 al_draw_bitmap(fotos[pergunta], 20, 90, 0);
             }
             else {
-                // quadro no lugar da foto que nao foi encontrada
                 al_draw_filled_rectangle(20, 90, 320, 450, painel);
                 al_draw_text(fonte, branco, 170, 260, ALLEGRO_ALIGN_CENTRE, "Imagem nao encontrada:");
                 al_draw_text(fonte, amarelo, 170, 280, ALLEGRO_ALIGN_CENTRE, arquivos[pergunta]);
                 al_draw_text(fonte, cinza, 170, 310, ALLEGRO_ALIGN_CENTRE, "(coloque a foto na pasta do projeto)");
             }
-            // moldura da foto: vermelha nos chefes finais
             if (eh_chefe(pergunta)) {
                 al_draw_rectangle(20, 90, 320, 450, al_map_rgb(210, 60, 50), 5);
             }
@@ -559,58 +503,51 @@ int main()
                 al_draw_rectangle(20, 90, 320, 450, branco, 3);
             }
 
-            // mapa
             al_draw_text(fonte, cinza, 600, 66, ALLEGRO_ALIGN_CENTRE,
                 "Clique no estado onde fica o monumento:");
-            // qual estado esta embaixo do mouse agora (-1 = nenhum)
             int estado_mouse = estado_na_tela(mouse_x, mouse_y);
 
-            // percorre a matriz linha por linha, coluna por coluna
             for (int lin = 0; lin < MAPA_LINHAS; lin++) {
                 for (int col = 0; col < MAPA_COLUNAS; col++) {
                     char letra = mapa[lin][col];
                     if (letra == '.') {
-                        continue; // e mar: nao desenha nada
+                        continue;
                     }
 
                     int i = estado_da_letra(letra);
                     int x = MAPA_X + col * CELULA;
                     int y = MAPA_Y + lin * CELULA;
 
-                    ALLEGRO_COLOR cor = al_map_rgb(70, 150, 80); // verde normal
+                    ALLEGRO_COLOR cor = al_map_rgb(70, 150, 80);
                     if (escolhido != -1 && i == respostas[pergunta]) {
-                        cor = amarelo;                           // resposta certa
+                        cor = amarelo;
                     }
                     else if (i == escolhido) {
-                        cor = al_map_rgb(210, 60, 50);           // escolha errada
+                        cor = al_map_rgb(210, 60, 50);
                     }
                     else if (escolhido == -1 && i == estado_mouse && !eh_chefe(pergunta)) {
-                        cor = al_map_rgb(130, 210, 140);         // verde claro (mouse em cima)
+                        cor = al_map_rgb(130, 210, 140);
                     }
                     al_draw_filled_rectangle(x, y, x + CELULA, y + CELULA, cor);
 
-                    // fronteira: desenha uma linha escura onde o vizinho
-                    // e outro estado ou o mar (ou onde a matriz acaba)
                     if (lin == 0 || mapa[lin - 1][col] != letra) {
-                        al_draw_line(x, y, x + CELULA, y, preto, 1);                     // em cima
+                        al_draw_line(x, y, x + CELULA, y, preto, 1);
                     }
                     if (lin == MAPA_LINHAS - 1 || mapa[lin + 1][col] != letra) {
-                        al_draw_line(x, y + CELULA, x + CELULA, y + CELULA, preto, 1);   // embaixo
+                        al_draw_line(x, y + CELULA, x + CELULA, y + CELULA, preto, 1);
                     }
                     if (col == 0 || mapa[lin][col - 1] != letra) {
-                        al_draw_line(x, y, x, y + CELULA, preto, 1);                     // esquerda
+                        al_draw_line(x, y, x, y + CELULA, preto, 1);
                     }
                     if (col == MAPA_COLUNAS - 1 || mapa[lin][col + 1] != letra) {
-                        al_draw_line(x + CELULA, y, x + CELULA, y + CELULA, preto, 1);   // direita
+                        al_draw_line(x + CELULA, y, x + CELULA, y + CELULA, preto, 1);
                     }
                 }
             }
 
-            // escreve a sigla de cada estado
             for (int i = 0; i < TOTAL; i++) {
                 int x = MAPA_X + rotulo_coluna[i] * CELULA + CELULA / 2;
                 int y = MAPA_Y + rotulo_linha[i] * CELULA;
-                // sigla em cima do estado = preta; sigla no mar = branca
                 ALLEGRO_COLOR cor_sigla = preto;
                 if (rotulo_coluna[i] >= MAPA_COLUNAS || mapa[rotulo_linha[i]][rotulo_coluna[i]] == '.') {
                     cor_sigla = branco;
@@ -618,7 +555,6 @@ int main()
                 al_draw_text(fonte, cor_sigla, x, y, ALLEGRO_ALIGN_CENTRE, siglas[i]);
             }
 
-            // painel de mensagens embaixo
             al_draw_filled_rounded_rectangle(20, 465, LARGURA - 20, ALTURA - 10, 8, 8, painel);
             al_draw_rounded_rectangle(20, 465, LARGURA - 20, ALTURA - 10, 8, 8, borda, 2);
 
@@ -665,7 +601,6 @@ int main()
 
         al_flip_display();
 
-        // espera o jogador fazer alguma coisa
         ALLEGRO_EVENT evento;
         al_wait_for_event(fila, &evento);
 
@@ -679,10 +614,10 @@ int main()
 
             if (tecla == ALLEGRO_KEY_ESCAPE) {
                 if (tela == TELA_MENU) {
-                    rodando = 0;      // no menu, ESC fecha o jogo
+                    rodando = 0;
                 }
                 else {
-                    tela = TELA_MENU; // nas outras telas, ESC volta ao menu
+                    tela = TELA_MENU;
                 }
             }
             else if (tecla == ALLEGRO_KEY_D && tela == TELA_JOGO && !eh_chefe(pergunta)) {
@@ -690,54 +625,48 @@ int main()
             }
             else if ((tecla == ALLEGRO_KEY_R && (tela == TELA_JOGO || tela == TELA_FIM)) ||
                      (enter && tela == TELA_FIM)) {
-                novo_jogo = 1;        // reinicia o jogo inteiro
+                novo_jogo = 1;
             }
             else if (enter && tela == TELA_JOGO && escolhido != -1) {
-                // so passa de pergunta depois que o jogador ja respondeu
                 if (pergunta < TOTAL_PERGUNTAS - 1) {
-                    pergunta++;      // vai para a proxima pergunta
+                    pergunta++;
                     escolhido = -1;
                     dica = 0;
                 }
                 else {
-                    tela = TELA_FIM; // era a ultima: mostra a tela final
+                    tela = TELA_FIM;
                 }
             }
         }
         else if (evento.type == ALLEGRO_EVENT_MOUSE_AXES) {
-            // o mouse se mexeu: guarda a posicao para pintar o estado embaixo dele
             mouse_x = evento.mouse.x;
             mouse_y = evento.mouse.y;
         }
         else if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && tela == TELA_MENU) {
-            // ve em qual botao do menu o jogador clicou
             for (int b = 0; b < TOTAL_BOTOES; b++) {
                 int y = BOTAO_Y + b * BOTAO_ESPACO;
                 if (mouse_dentro(evento.mouse.x, evento.mouse.y, BOTAO_X, y, BOTAO_L, BOTAO_A)) {
                     if (b == 0) {
-                        novo_jogo = 1;          // JOGAR
+                        novo_jogo = 1;
                     }
                     else if (b == 1) {
-                        tela = TELA_TUTORIAL;   // COMO JOGAR
+                        tela = TELA_TUTORIAL;
                     }
                     else {
-                        tela = TELA_CREDITOS;   // CREDITOS
+                        tela = TELA_CREDITOS;
                     }
                 }
             }
         }
         else if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN &&
                  (tela == TELA_TUTORIAL || tela == TELA_CREDITOS)) {
-            // botao VOLTAR
             if (mouse_dentro(evento.mouse.x, evento.mouse.y, VOLTAR_X, VOLTAR_Y, VOLTAR_L, VOLTAR_A)) {
                 tela = TELA_MENU;
             }
         }
         else if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && tela == TELA_JOGO && escolhido == -1) {
-            // ve em qual estado o mouse clicou (-1 se clicou no mar ou fora do mapa)
             escolhido = estado_na_tela(evento.mouse.x, evento.mouse.y);
 
-            // se clicou em um estado, confere a resposta e soma os pontos
             if (escolhido != -1 && escolhido == respostas[pergunta]) {
                 pontos = pontos + pontos_da_pergunta(pergunta);
                 acertos++;
@@ -745,7 +674,6 @@ int main()
             }
         }
 
-        // comeca um jogo novo: volta para a primeira pergunta e zera tudo
         if (novo_jogo) {
             pergunta = 0;
             pontos = 0;

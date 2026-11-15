@@ -1,15 +1,6 @@
-# Instalador do jogo "Onde Fica?" (Projeto Integrador)
-# Baixa o projeto do GitHub para a pasta Onde-Fica na area de trabalho.
-#
-# Uso (no PowerShell):
-#   irm https://raw.githubusercontent.com/PQueirozDev/PAC-PI/main/docs/instalar.ps1 | iex
-#
-# Se o Git estiver instalado, o projeto e clonado (e atualizado com git pull
-# nas proximas vezes). Sem o Git, o script baixa o .zip do GitHub e extrai.
 
 & {
     $ErrorActionPreference = 'Stop'
-    # o PowerShell 5 do Windows precisa disso para falar com o GitHub
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
     $repositorio = 'https://github.com/PQueirozDev/PAC-PI'
@@ -58,7 +49,6 @@
         if (Test-Path $extraido) { Remove-Item $extraido -Recurse -Force }
         Invoke-WebRequest "$repositorio/archive/refs/heads/main.zip" -OutFile $zip -UseBasicParsing
         Expand-Archive $zip -DestinationPath $extraido -Force
-        # o zip do GitHub tem uma pasta dentro (PAC-PI-main); ela vira a pasta Onde-Fica
         $pastaDoZip = Get-ChildItem $extraido -Directory | Select-Object -First 1
         Move-Item $pastaDoZip.FullName $destino
         Remove-Item $zip, $extraido -Recurse -Force
@@ -72,6 +62,5 @@
     Write-Host 'O Visual Studio baixa o Allegro sozinho pelo NuGet na primeira vez.'
     Write-Host ''
 
-    # abre a pasta no Explorador de Arquivos
     Start-Process explorer.exe $destino
 }

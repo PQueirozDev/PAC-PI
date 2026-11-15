@@ -174,3 +174,7 @@ Foto Real Forte Príncipe da Beira: "Forte Príncipe da Beira", de Israelvalejr,
 ## Limites
 
 Quinze perguntas fixas, sempre na mesma ordem, sem sons, animações, ranking ou cronômetro. Os textos na tela estão sem acentos para evitar problemas de codificação com a fonte embutida do Allegro.
+
+## Objetivo educacional
+
+O jogo busca incentivar o aprendizado sobre a geografia brasileira de forma interativa, ajudando os jogadores a reconhecer estados, regiões e características culturais do Brasil.

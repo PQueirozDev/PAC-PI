@@ -139,6 +139,41 @@ int pontos_da_pergunta(int p)
     return PONTOS_POR_ACERTO;
 }
 
+/* A tela cheia: o jogo e desenhado em uma tela virtual de LARGURA x ALTURA
+   e depois ampliado para o tamanho do monitor, com faixas pretas nas sobras. */
+float tela_escala = 1;
+float tela_x = 0;
+float tela_y = 0;
+
+void desenhar_tela_virtual(ALLEGRO_DISPLAY *janela, ALLEGRO_BITMAP *tela_virtual)
+{
+    float largura_janela = al_get_display_width(janela);
+    float altura_janela = al_get_display_height(janela);
+
+    tela_escala = largura_janela / LARGURA;
+    if (altura_janela / ALTURA < tela_escala) {
+        tela_escala = altura_janela / ALTURA;
+    }
+    tela_x = (largura_janela - LARGURA * tela_escala) / 2;
+    tela_y = (altura_janela - ALTURA * tela_escala) / 2;
+
+    al_set_target_backbuffer(janela);
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    al_draw_scaled_bitmap(tela_virtual, 0, 0, LARGURA, ALTURA,
+        tela_x, tela_y, LARGURA * tela_escala, ALTURA * tela_escala, 0);
+}
+
+/* Converte a posicao do mouse no monitor para a posicao na tela do jogo. */
+int mouse_jogo_x(int x)
+{
+    return (int)((x - tela_x) / tela_escala);
+}
+
+int mouse_jogo_y(int y)
+{
+    return (int)((y - tela_y) / tela_escala);
+}
+
 int mouse_dentro(int mx, int my, int x, int y, int largura, int altura)
 {
     if (mx >= x && mx <= x + largura && my >= y && my <= y + altura) {
@@ -169,7 +204,10 @@ int main()
     al_init_primitives_addon();
     al_init_image_addon();
 
+    al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW);
     ALLEGRO_DISPLAY *janela = al_create_display(LARGURA, ALTURA);
+    ALLEGRO_BITMAP *tela_virtual = al_create_bitmap(LARGURA, ALTURA);
+    int tela_cheia = 1;
     ALLEGRO_EVENT_QUEUE *fila = al_create_event_queue();
     ALLEGRO_FONT *fonte = al_create_builtin_font();
 
@@ -337,6 +375,7 @@ int main()
         ALLEGRO_COLOR painel = al_map_rgb(32, 46, 88);
         ALLEGRO_COLOR borda = al_map_rgb(80, 100, 160);
 
+        al_set_target_bitmap(tela_virtual);
         al_clear_to_color(fundo);
 
         if (tela == TELA_MENU) {
@@ -376,6 +415,7 @@ int main()
             al_draw_text(fonte, branco, 470, 355, 0, "ENTER = proxima pergunta");
             al_draw_text(fonte, branco, 470, 380, 0, "R     = reiniciar o jogo");
             al_draw_text(fonte, branco, 470, 405, 0, "ESC   = voltar ao menu");
+            al_draw_text(fonte, branco, 470, 430, 0, "F11   = tela cheia / janela");
 
             al_draw_text(fonte, cinza, LARGURA / 2, 455, ALLEGRO_ALIGN_CENTRE,
                 "Dica: os estados pequenos do litoral tem a sigla escrita no mar.");
@@ -599,20 +639,34 @@ int main()
             }
         }
 
+        desenhar_tela_virtual(janela, tela_virtual);
         al_flip_display();
 
         ALLEGRO_EVENT evento;
         al_wait_for_event(fila, &evento);
 
+        /* Daqui para baixo o mouse ja fica nas coordenadas do jogo (880 x 600). */
+        if (evento.type == ALLEGRO_EVENT_MOUSE_AXES || evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+            evento.mouse.x = mouse_jogo_x(evento.mouse.x);
+            evento.mouse.y = mouse_jogo_y(evento.mouse.y);
+        }
+
         if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
             rodando = 0;
+        }
+        else if (evento.type == ALLEGRO_EVENT_DISPLAY_RESIZE) {
+            al_acknowledge_resize(janela);
         }
         else if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
             int tecla = evento.keyboard.keycode;
 
             int enter = (tecla == ALLEGRO_KEY_ENTER || tecla == ALLEGRO_KEY_PAD_ENTER);
 
-            if (tecla == ALLEGRO_KEY_ESCAPE) {
+            if (tecla == ALLEGRO_KEY_F11) {
+                tela_cheia = !tela_cheia;
+                al_set_display_flag(janela, ALLEGRO_FULLSCREEN_WINDOW, tela_cheia);
+            }
+            else if (tecla == ALLEGRO_KEY_ESCAPE) {
                 if (tela == TELA_MENU) {
                     rodando = 0;
                 }
@@ -693,6 +747,7 @@ int main()
             al_destroy_bitmap(fotos[p]);
         }
     }
+    al_destroy_bitmap(tela_virtual);
     al_destroy_font(fonte);
     al_destroy_event_queue(fila);
     al_destroy_display(janela);

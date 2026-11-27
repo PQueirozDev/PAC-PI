@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <string.h>
 #include <allegro5/allegro.h>
